@@ -1,0 +1,146 @@
+{
+    "nodes": [
+        {
+            "IP_addr": "10.0.0.1",
+            "platform": "Windows",
+            "services": [
+                "client"
+            ],
+            "routes": [
+                "10.0.0.10",
+                "10.0.0.5",
+                "10.0.0.8"
+            ],
+            "start_node": true,
+            "loot_rate": 0
+        },
+        {
+            "IP_addr": "10.0.0.2",
+            "platform": "Windows",
+            "services": [
+                "client"
+            ],
+            "routes": [
+                "10.0.0.10",
+                "10.0.0.5",
+                "10.0.0.8"
+            ],
+            "start_node": true,
+            "loot_rate": 0
+        },
+        {
+            "IP_addr": "10.0.0.3",
+            "platform": "Windows",
+            "services": [
+                "client"
+            ],
+            "routes": [
+                "10.0.0.10",
+                "10.0.0.5",
+                "10.0.0.8"
+            ],
+            "start_node": false,
+            "loot_rate": 0
+        },
+        {
+            "IP_addr": "10.0.0.4",
+            "platform": "Windows",
+            "services": [
+                "client"
+            ],
+            "routes": [
+                "10.0.0.10",
+                "10.0.0.5",
+                "10.0.0.8",
+                "10.0.0.9"
+            ],
+            "start_node": false,
+            "loot_rate": 0
+        },
+        {
+            "IP_addr": "10.0.0.5",
+            "platform": "Windows",
+            "services": [
+                "mail"
+            ],
+            "routes": [
+                "10.0.0.10",
+                "10.0.0.8",
+                "10.0.0.1",
+                "10.0.0.2",
+                "10.0.0.3",
+                "10.0.0.4"
+            ],
+            "start_node": false,
+            "loot_rate": 35
+        },
+        {
+            "IP_addr": "10.0.0.6",
+            "platform": "Network",
+            "services": [
+                "SNMP"
+            ],
+            "routes": [
+                "10.0.0.8"
+            ],
+            "start_node": false,
+            "loot_rate": 0
+        },
+        {
+            "IP_addr": "10.0.0.7",
+            "platform": "Nix",
+            "services": [
+                "FTP"
+            ],
+            "routes": [],
+            "start_node": false,
+            "loot_rate": 40
+        },
+        {
+            "IP_addr": "10.0.0.8",
+            "platform": "Nix",
+            "services": [
+                "Web"
+            ],
+            "routes": [
+                "10.0.0.8",
+                "10.0.0.7",
+                "10.0.0.1",
+                "10.0.0.2",
+                "10.0.0.3",
+                "10.0.0.4"
+            ],
+            "start_node": false,
+            "loot_rate": 10
+        },
+        {
+            "IP_addr": "10.0.0.9",
+            "platform": "Nix",
+            "services": [
+                "SSH"
+            ],
+            "routes": [
+                "10.0.0.7",
+                "10.0.0.8"
+            ],
+            "start_node": false,
+            "loot_rate": 30
+        },
+        {
+            "IP_addr": "10.0.0.10",
+            "platform": "Windows",
+            "services": [
+                "SMB"
+            ],
+            "routes": [
+                "10.0.0.1",
+                "10.0.0.2",
+                "10.0.0.3",
+                "10.0.0.4",
+                "10.0.0.5"
+            ],
+            "start_node": false,
+            "loot_rate": 50
+        }
+    ]
+}
