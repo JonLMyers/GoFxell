@@ -13,7 +13,7 @@ const viewerKey contextKey = "viewer"
 
 // A Viewer is used for restricted viewing of nodes.
 type Viewer interface {
-	View() // TODO: Implement this
+	View(Node) Node
 }
 
 // WithViewer associates a viewer with a context.
@@ -34,4 +34,18 @@ func GetViewer(ctx context.Context) Viewer {
 		panic(fmt.Errorf("no viewer stored in provided context"))
 	}
 	return viewer
+}
+
+// example for jon (requires WithViewer being called on the provided context first)
+func DoThing(ctx context.Context, node Node) {
+	viewer := GetViewer(ctx)
+
+	// You probably won't need this, I just needed to print the team name
+	team, ok := viewer.(Team) //wtf is this?
+	if ok {
+		panic(fmt.Errorf("viewer is not a team"))
+	}
+
+	visibleNode := team.View(node)
+	fmt.Printf("Here's what team %s can see: %+v", team.Name, visibleNode)
 }

@@ -1,0 +1,36 @@
+Nite ... 4 something
+Copy right Kali adn cobalt 
+Tutorial via a certification process - really fucking cringe but like did I work with the devs lol?
+I kinda like the terminal :) 
+    - a bit of clicking and 4 categories
+        info gather
+            I love the progress bars for the fingerprint/scan
+        network intrusion
+        data forensics
+        advanced tools
+There are modules at the bottom which provide extra tools like satelites ect
+This cert process is shit. A lot of good art but that makes this process grueeeling
+*Our tutorial should be forced but allows you to navigate the cli by yourself or use an option tutorial.
+God the fucking lack of copy and paste is fucking annoying (I found the objectives in the top right which makes this less toxic)
+
+-t for time and depth by selling time. We could do something were you spend more resources/time to get much better results.
+
+I like the multiple windows option. This allows the user to use a larger variety of options
+searching exploits is neat
+Foxacid is VERY Neat. Pick cards to match exploit params. "Cringe voice lol"
+    This plays into my puzzle idea where the team attempts to obtain different pieces and use it to attack a capstone sever.
+
+Password cracking tool was kinda dumb. Aside from that I like the wordlist decision + time component
+Basic Filesystem is neat idea
+
+I am annoyed that I can not do things my way, there is a single correct route to take with not art.
+Team resources share for sharing information (but we will likely have a chat)
+
+MITM for actions
+
+They are using VPN's to connect to certain machines. Maybe we need a connect process before certain actions are run? That sounds nice :)
+
+Social Engineering requires a bit of prepwork... maybe nice? maybe annoying
+
+They had a minictf to escelate :)
+ - some simple image deduction, some ceaser cipher, ect

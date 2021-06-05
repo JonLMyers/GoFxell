@@ -23,18 +23,19 @@ func TestFilterStartNodes(t *testing.T) {
 }
 
 func TestStartNodeSelect(t *testing.T) {
-	nodes := []Node{
-		{
-			IPAddr:    "127.0.0.1",
-			StartNode: true,
-		},
-		{
-			IPAddr:    "10.0.0.1",
-			StartNode: true,
+	gameMap := &Map{
+		Nodes: []Node{
+			{
+				IPAddr:    "127.0.0.1",
+				StartNode: true,
+			},
+			{
+				IPAddr:    "10.0.0.1",
+				StartNode: true,
+			},
 		},
 	}
-	startNodes := FilterStartNodes(nodes)
-	require.Len(t, startNodes, 2)
-	_, startNodes = startNodes.Select()
-	require.Len(t, startNodes, 1)
+	require.Len(t, gameMap.startNodes, 2)
+	gameMap.SelectStartNode()
+	require.Len(t, gameMap.startNodes, 1)
 }

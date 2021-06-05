@@ -12,8 +12,7 @@
                 "10.0.0.8"
             ],
             "start_node": true,
-            "loot_rate": 0,
-            "max_miners": 3
+            "loot_rate": 0
         },
         {
             "IP_addr": "10.0.0.2",
@@ -27,8 +26,7 @@
                 "10.0.0.8"
             ],
             "start_node": true,
-            "loot_rate": 0,
-            "max_miners": 3
+            "loot_rate": 0
         },
         {
             "IP_addr": "10.0.0.3",
@@ -42,8 +40,7 @@
                 "10.0.0.8"
             ],
             "start_node": false,
-            "loot_rate": 0,
-            "max_miners": 3
+            "loot_rate": 0
         },
         {
             "IP_addr": "10.0.0.4",
@@ -58,8 +55,7 @@
                 "10.0.0.9"
             ],
             "start_node": false,
-            "loot_rate": 0,
-            "max_miners": 3
+            "loot_rate": 0
         },
         {
             "IP_addr": "10.0.0.5",
@@ -76,8 +72,7 @@
                 "10.0.0.4"
             ],
             "start_node": false,
-            "loot_rate": 35,
-            "max_miners": 3
+            "loot_rate": 35
         },
         {
             "IP_addr": "10.0.0.6",
@@ -89,8 +84,7 @@
                 "10.0.0.8"
             ],
             "start_node": false,
-            "loot_rate": 0,
-            "max_miners": 3
+            "loot_rate": 0
         },
         {
             "IP_addr": "10.0.0.7",
@@ -100,8 +94,7 @@
             ],
             "routes": [],
             "start_node": false,
-            "loot_rate": 40,
-            "max_miners": 3
+            "loot_rate": 40
         },
         {
             "IP_addr": "10.0.0.8",
@@ -118,8 +111,7 @@
                 "10.0.0.4"
             ],
             "start_node": false,
-            "loot_rate": 10,
-            "max_miners": 3
+            "loot_rate": 10
         },
         {
             "IP_addr": "10.0.0.9",
@@ -132,8 +124,7 @@
                 "10.0.0.8"
             ],
             "start_node": false,
-            "loot_rate": 30,
-            "max_miners": 3
+            "loot_rate": 30
         },
         {
             "IP_addr": "10.0.0.10",
@@ -149,8 +140,7 @@
                 "10.0.0.5"
             ],
             "start_node": false,
-            "loot_rate": 50,
-            "max_miners": 3
+            "loot_rate": 50
         }
     ]
 }
