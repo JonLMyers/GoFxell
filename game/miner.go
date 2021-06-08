@@ -13,22 +13,25 @@ const (
 
 type Miner struct {
 	minerId   uuid.UUID
-	teamName  string
+	PID       int
+	CMD       string
+	TeamName  string
 	minerType string
 	interval  int
 	amount    int
 }
 
-func NewMiner(minerType string, team Team) Miner {
-	miner := Miner{uuid.New(), team.Name, minerType, defaultInterval, defaultMineAmount}
+func NewMiner(minerType string, team Team, PID int, cmd string) Miner {
+	miner := Miner{uuid.New(), PID, cmd, team.Name, minerType, defaultInterval, defaultMineAmount}
 	return miner
 }
 
-func (miner *Miner) Mine(team *Team, node Node) {
+func (miner *Miner) Mine(team *Team, index int) {
 	cont := true
 	for cont {
-		for _, m := range node.Miners {
+		for _, m := range team.DiscoveredNodes[index].Node.Miners {
 			cont = false
+			time.Sleep(time.Duration(miner.interval) * time.Second)
 			if m.minerId == miner.minerId {
 				if miner.minerType == "Bandwidth" {
 					team.Bandwidth = team.Bandwidth + miner.amount
@@ -46,6 +49,5 @@ func (miner *Miner) Mine(team *Team, node Node) {
 				break
 			}
 		}
-		time.Sleep(time.Duration(miner.interval) * time.Second)
 	}
 }

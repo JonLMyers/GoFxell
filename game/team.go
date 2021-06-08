@@ -91,11 +91,6 @@ func (team Team) View(node Node) (visibleNode Node) {
 	if discoveredNode.NodeOwned {
 		visibleNode.NodeOwned = discoveredNode.NodeOwned
 	}
-	for _, miner := range discoveredNode.Miners {
-		if miner.teamName == team.Name {
-			visibleNode.Miners = append(visibleNode.Miners, miner)
-		}
-	}
 
 	return
 }

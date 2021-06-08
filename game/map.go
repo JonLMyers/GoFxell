@@ -36,15 +36,17 @@ func (m *Map) SelectStartNode() Node {
 }
 
 type Node struct {
-	IPAddr    string   `json:"IP_addr"`
-	Platform  string   `json:"platform"`
-	Services  []string `json:"services"`
-	Routes    []string `json:"routes"`
-	StartNode bool     `json:"start_node"`
-	LootRate  int      `json:"loot_rate"`
-	MaxMiners int      `json:"max_miners"`
-	NodeOwned bool
-	Miners    []Miner
+	IPAddr         string   `json:"IP_addr"`
+	Platform       string   `json:"platform"`
+	Services       []string `json:"services"`
+	Routes         []string `json:"routes"`
+	StartNode      bool     `json:"start_node"`
+	LootRate       int      `json:"loot_rate"`
+	NodeOwned      bool
+	PIDS           []int
+	MaxMiners      int `json:"max_miners"`
+	MinersDeployed int
+	Miners         []Miner
 }
 
 // func (n Node) String() string {
