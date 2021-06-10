@@ -146,6 +146,7 @@ func contains(s []int, e int) bool {
 	return false
 }
 
+// This will turn into middleware, I think.
 func Connect(ipAddr string, team *game.Team, gameMap game.Map) (bool, error) {
 	index, err := team.DiscoveredNodes.IndexOf(ipAddr)
 	if err != nil {
