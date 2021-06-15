@@ -47,6 +47,9 @@ type Node struct {
 	MaxMiners      int `json:"max_miners"`
 	MinersDeployed int
 	Miners         []Miner
+	RedFootprint   int
+	BlueFootprint  int
+	Logs           []Log
 }
 
 // func (n Node) String() string {

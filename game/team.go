@@ -3,10 +3,12 @@ package game
 import "fmt"
 
 const (
-	defaultBandwidth = 100
-	defaultIO        = 100
-	defaultCPU       = 100
-	defaultEntropy   = 100
+	defaultBandwidth  = 100
+	defaultIO         = 100
+	defaultCPU        = 100
+	defaultEntropy    = 100
+	defaultFootprint  = 0
+	defaultOpSecMeter = 0
 )
 
 type DiscoveredNode struct {
@@ -38,13 +40,14 @@ type Team struct {
 	Io              int
 	Cpu             int
 	Entropy         int
+	OpSecMeter      int
 	StartNode       Node
 	DiscoveredNodes DiscoveredNodes
 }
 
 func NewTeam(name string, gameMap *Map) *Team {
 	startNode := gameMap.SelectStartNode()
-	team := &Team{name, defaultBandwidth, defaultIO, defaultCPU, defaultEntropy, startNode, []DiscoveredNode{}}
+	team := &Team{name, defaultBandwidth, defaultIO, defaultCPU, defaultEntropy, defaultOpSecMeter, startNode, []DiscoveredNode{}}
 
 	if team.StartNode.IPAddr != "" {
 		team.DiscoverNodeIP(team.StartNode)
@@ -90,6 +93,11 @@ func (team Team) View(node Node) (visibleNode Node) {
 	}
 	if discoveredNode.NodeOwned {
 		visibleNode.NodeOwned = discoveredNode.NodeOwned
+	}
+	if team.Name == "Red" {
+		visibleNode.RedFootprint = discoveredNode.RedFootprint
+	} else {
+		visibleNode.BlueFootprint = discoveredNode.BlueFootprint
 	}
 
 	return

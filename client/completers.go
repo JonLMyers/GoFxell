@@ -29,6 +29,7 @@ func cmdCompleter(d prompt.Document) []prompt.Suggest {
 	s := []prompt.Suggest{
 		{Text: "show routes", Description: "show routes"},
 		{Text: "show proc", Description: "show processes"},
+		{Text: "show logs", Description: "show logs"},
 		{Text: "deploy miner", Description: "deploy miner {Entropy/CPU/Io/Bandwidth}"},
 		{Text: "kill", Description: "kill {Process ID (PID)"},
 		{Text: "exit", Description: "Exit CLI"},

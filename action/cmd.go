@@ -75,12 +75,24 @@ func ShowProcesses(ipAddr string, team *game.Team, gameMap game.Map) ([]Process,
 	for _, miner := range team.DiscoveredNodes[index].Node.Miners {
 		if miner.TeamName != team.Name {
 			// 50/50 chance of finding not implemented
+			// Increase the opposite teams Footprint?
 			procs = append(procs, Process{miner.TeamName, miner.PID, miner.CMD})
 		}
 		procs = append(procs, Process{miner.TeamName, miner.PID, miner.CMD})
 	}
 
 	return procs, nil
+}
+
+func ViewNodeFootprint(ipAddr string, team *game.Team) (int, error) {
+	index, err := team.DiscoveredNodes.IndexOf(ipAddr)
+	if err != nil {
+		return 0, err
+	}
+	if team.Name == "Red" {
+		return team.DiscoveredNodes[index].Node.RedFootprint, nil
+	}
+	return team.DiscoveredNodes[index].Node.BlueFootprint, nil
 }
 
 func KillProcess(ipAddr string, PID int, team *game.Team) (bool, error) {
@@ -127,6 +139,7 @@ func DeployMiner(ipAddr string, minerType string, team *game.Team) (bool, error)
 					team.DiscoveredNodes[index].MinersDeployed = team.DiscoveredNodes[index].MinersDeployed + 1
 					team.DiscoveredNodes[index].PIDS = append(team.DiscoveredNodes[index].PIDS, PID)
 					fmt.Println("Process: miner.Mine() Initiated")
+					team.UpdateNodeFootprint(team.DiscoveredNodes[index].Node.IPAddr, 5)
 					return true, nil
 				}
 			}

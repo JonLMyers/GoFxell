@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/JonLMyers/GoFxell/action"
+	"github.com/JonLMyers/GoFxell/game"
 )
 
 func Executor(cmd string) {
@@ -101,6 +102,19 @@ func CmdExecutor(cmd string) {
 		fmt.Println(processes)
 		return
 	}
+
+	if strings.HasPrefix(cmd, "show footprint") {
+		resources, _ := action.ViewNodeFootprint(n.IPAddr, playerTeam)
+		fmt.Println(resources)
+		return
+	}
+
+	if strings.HasPrefix(cmd, "show logs") {
+		logs, _ := game.ViewLogs(n.IPAddr, playerTeam)
+		fmt.Println(logs)
+		return
+	}
+
 	if strings.HasPrefix(cmd, "kill") {
 		i, err := strconv.Atoi(cmdParts[1])
 		if err != nil {
