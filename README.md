@@ -3,7 +3,7 @@ Fxell server written in Golang
 
 # Feature List
 ## Footprint
-Footprint Meters on each node. Footprint is mesaured as a percentage and is a multiplier
+[x] Footprint Meters on each node. Footprint is mesaured as a percentage and is a multiplier
 for the other teams detection actions. 100% footprint results in the implant the team is using being exposed in the proclist.
 
 Operational Security: Starts at 100 goes down to zero? Side affects?

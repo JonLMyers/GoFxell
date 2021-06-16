@@ -1,7 +1,9 @@
 package game
 
+import "github.com/google/uuid"
+
 type Log struct {
-	id        int
+	id        string
 	Type      string
 	LogString string
 	TeamName  string
@@ -13,7 +15,8 @@ func CreateLog(ipAddr string, logType string, details string, value int, team *T
 	if err != nil {
 		return err
 	}
-	log := Log{len(team.DiscoveredNodes[index].Node.Logs), logType, details, team.Name, value}
+
+	log := Log{uuid.New().String(), logType, details, team.Name, value}
 	team.DiscoveredNodes[index].Node.Logs = append(team.DiscoveredNodes[index].Node.Logs, log)
 	team.UpdateNodeFootprint(ipAddr, value)
 	return nil
@@ -25,6 +28,28 @@ func ViewLogs(ipAddr string, team *Team) ([]Log, error) {
 		return nil, err
 	}
 	return team.DiscoveredNodes[index].Node.Logs, nil
+}
+
+func CleanLog(logId string, ipAddr string, team *Team) (bool, error) {
+	index, err := team.DiscoveredNodes.IndexOf(ipAddr)
+	if err != nil {
+		return false, err
+	}
+	logs := team.DiscoveredNodes[index].Node.Logs
+	for i, log := range logs {
+		if log.id == logId {
+			if team.Name == "Red" {
+				team.DiscoveredNodes[index].RedFootprint = team.DiscoveredNodes[index].RedFootprint - log.Value
+			} else {
+				team.DiscoveredNodes[index].BlueFootprint = team.DiscoveredNodes[index].BlueFootprint - log.Value
+			}
+			//Removes the log from the slice
+			logs[i] = logs[len(logs)-1]
+			team.DiscoveredNodes[index].Node.Logs = logs[:len(logs)-1]
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func (team Team) UpdateNodeFootprint(ipAddr string, value int) (int, error) {

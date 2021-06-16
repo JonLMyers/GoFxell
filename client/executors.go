@@ -115,6 +115,16 @@ func CmdExecutor(cmd string) {
 		return
 	}
 
+	if strings.HasPrefix(cmd, "clean log") {
+		if len(cmdParts) < 3 {
+			fmt.Println("Invalid Syntax. Ensure you are providing a LogId")
+		}
+
+		logs, _ := game.CleanLog(cmdParts[2], n.IPAddr, playerTeam)
+		fmt.Println(logs)
+		return
+	}
+
 	if strings.HasPrefix(cmd, "kill") {
 		i, err := strconv.Atoi(cmdParts[1])
 		if err != nil {
