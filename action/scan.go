@@ -11,6 +11,7 @@ func Scan(ipAddr string, team *game.Team) (bool, error) {
 	index, err := team.DiscoveredNodes.IndexOf(ipAddr)
 	if err != nil {
 		fmt.Println("IP Address not in teams discovered nodes")
+		fmt.Println(err)
 		return false, err
 	}
 
