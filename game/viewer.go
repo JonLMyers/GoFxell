@@ -36,6 +36,7 @@ func GetViewer(ctx context.Context) Viewer {
 	return viewer
 }
 
+/*
 // example for jon (requires WithViewer being called on the provided context first)
 func DoThing(ctx context.Context, node Node) {
 	viewer := GetViewer(ctx)
@@ -46,6 +47,7 @@ func DoThing(ctx context.Context, node Node) {
 		panic(fmt.Errorf("viewer is not a team"))
 	}
 
-	visibleNode := team.View(node)
+	visibleNode := team.View(&node)
 	fmt.Printf("Here's what team %s can see: %+v", team.Name, visibleNode)
 }
+*/

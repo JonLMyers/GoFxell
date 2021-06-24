@@ -1,6 +1,9 @@
 package game
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 const (
 	defaultBandwidth  = 100
@@ -12,7 +15,7 @@ const (
 )
 
 type DiscoveredNode struct {
-	Node
+	*Node
 	DiscoveredIPAddr   bool
 	DiscoveredPlatform bool
 	DiscoveredServices bool
@@ -26,28 +29,33 @@ type DiscoveredNodes []DiscoveredNode
 // IndexOf returns the index of the discovered node with the provided IP address.
 func (nodes DiscoveredNodes) IndexOf(ipAddr string) (int, error) {
 	for i, node := range nodes {
-		if ipAddr == node.IPAddr {
+		if ipAddr == node.IPAddr && node.Active {
 			return i, nil
 		}
 	}
 
-	return 0, fmt.Errorf("have not discovered node with IP %q", ipAddr)
+	return 0, fmt.Errorf("Node (%q) is not currently accessible", ipAddr)
 }
 
 type Team struct {
-	Name            string
-	Bandwidth       int
-	Io              int
-	Cpu             int
-	Entropy         int
-	OpSecMeter      int
-	StartNode       Node
-	DiscoveredNodes DiscoveredNodes
+	Name              string
+	Bandwidth         int
+	Io                int
+	Cpu               int
+	Entropy           int
+	OpSecMeter        int
+	ObjectiveType     string
+	ObjectiveComplete bool
+	StartNode         Node
+	DiscoveredNodes   DiscoveredNodes
+	Monitors          []Monitor
+	mutex             sync.RWMutex
 }
 
-func NewTeam(name string, gameMap *Map) *Team {
+func NewTeam(name string, objType string, gameMap *Map) *Team {
 	startNode := gameMap.SelectStartNode()
-	team := &Team{name, defaultBandwidth, defaultIO, defaultCPU, defaultEntropy, defaultOpSecMeter, startNode, []DiscoveredNode{}}
+	var mutex = sync.RWMutex{}
+	team := &Team{name, defaultBandwidth, defaultIO, defaultCPU, defaultEntropy, defaultOpSecMeter, objType, false, startNode, []DiscoveredNode{}, []Monitor{}, mutex}
 
 	if team.StartNode.IPAddr != "" {
 		team.DiscoverNodeIP(team.StartNode)
@@ -66,7 +74,7 @@ func (team Team) GetResources() [4]string {
 }
 
 // View restricts what properties of a node are visible.
-func (team Team) View(node Node) (visibleNode Node) {
+func (team Team) View(node *Node) (visibleNode Node) {
 	// Determine if this node has been discovered.
 	i, err := team.DiscoveredNodes.IndexOf(node.IPAddr)
 	if err != nil {
@@ -112,7 +120,7 @@ func (team *Team) DiscoverNodeIP(node Node) {
 			return
 		}
 	}
-	team.DiscoveredNodes = append(team.DiscoveredNodes, DiscoveredNode{Node: node, DiscoveredIPAddr: true})
+	team.DiscoveredNodes = append(team.DiscoveredNodes, DiscoveredNode{Node: &node, DiscoveredIPAddr: true})
 }
 
 // DiscoverNodeRoutes enables a team to view the routes for a node.

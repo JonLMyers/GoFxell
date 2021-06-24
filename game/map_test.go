@@ -35,7 +35,6 @@ func TestStartNodeSelect(t *testing.T) {
 			},
 		},
 	}
-	require.Len(t, gameMap.startNodes, 2)
 	gameMap.SelectStartNode()
 	require.Len(t, gameMap.startNodes, 1)
 }
