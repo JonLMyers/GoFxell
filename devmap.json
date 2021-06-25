@@ -1,0 +1,42 @@
+{
+    "nodes": [
+        {
+            "IP_addr": "1.1.1.1",
+            "platform": "Windows",
+            "services": [
+                "client"
+            ],
+            "routes": [
+                "1.1.1.2"
+            ],
+            "start_node": true,
+            "objective_node": true,
+            "objective": {
+                "objective_type": "Exfiltrate",
+                "complete_time": 120
+            },
+            "loot_rate": 0,
+            "max_miners": 3,
+            "active": true
+        },
+        {
+            "IP_addr": "1.1.1.2",
+            "platform": "Windows",
+            "services": [
+                "client"
+            ],
+            "routes": [
+                "1.1.1.1"
+            ],
+            "start_node": true,
+            "objective_node": true,
+            "objective": {
+                "objective_type": "Exfiltrate",
+                "complete_time": 120
+            },
+            "loot_rate": 0,
+            "max_miners": 3,
+            "active": true
+        }
+    ]
+}

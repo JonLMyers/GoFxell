@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/JonLMyers/GoFxell/game"
 	"github.com/c-bata/go-prompt"
@@ -12,16 +13,17 @@ var gameMap *game.Map
 var n game.Node
 
 func SinglePlayer() {
-	gameMap = game.NewMap("maps.json") //NewMapFromFile
+	gameMap = game.NewMap("devmap.json") //NewMapFromFile
 	teamName := prompt.Input("Select Team Name (Red/Blue)> ", teamCompleter)
+	objectiveType := prompt.Input("Objective Type (A or B)> ", objectiveCompleter)
 
 	/* Functional Parameters with optional params */
 	/* https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis */
-	playerTeam = game.NewTeam(teamName, gameMap)
+	playerTeam = game.NewTeam(teamName, objectiveType, gameMap)
 
 	/* Main gameplay loop */
 	// https://youtu.be/-GV814cWiAw
-	fmt.Println(playerTeam.View(playerTeam.StartNode))
+	fmt.Println(playerTeam.View(&playerTeam.StartNode))
 	playerName := "player"
 	currentSystem := "fxell"
 	promptPrefix := fmt.Sprintf("%s@%s:~$ ", playerName, currentSystem)
@@ -29,6 +31,7 @@ func SinglePlayer() {
 	//cmd := prompt.Input(gamePrompt, actionCompleter)
 	//cmd = strings.TrimSpace(cmd)
 	//cmdParts := strings.Split(cmd, " ")
+	go VictoryChecker(playerTeam)
 
 	gamePrompt := prompt.New(
 		Executor,
@@ -45,7 +48,7 @@ func Connect(ipAddr string, team *game.Team, gameMap game.Map) (bool, error) {
 		fmt.Println(err)
 		return false, err
 	}
-	n = team.DiscoveredNodes[index].Node
+	n = *team.DiscoveredNodes[index].Node
 	if team.DiscoveredNodes[index].NodeOwned {
 		playerName := "player"
 		currentSystem := n.IPAddr
@@ -61,6 +64,15 @@ func Connect(ipAddr string, team *game.Team, gameMap game.Map) (bool, error) {
 		return true, nil
 	} else {
 		return false, nil
+	}
+}
+
+func VictoryChecker(team *game.Team) {
+	for {
+		if team.ObjectiveComplete {
+			fmt.Println(team.Name, "Team Victory!")
+			os.Exit(3)
+		}
 	}
 }
 

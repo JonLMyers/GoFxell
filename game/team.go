@@ -49,13 +49,12 @@ type Team struct {
 	StartNode         Node
 	DiscoveredNodes   DiscoveredNodes
 	Monitors          []Monitor
-	mutex             sync.RWMutex
+	mutex             *sync.RWMutex
 }
 
 func NewTeam(name string, objType string, gameMap *Map) *Team {
 	startNode := gameMap.SelectStartNode()
-	var mutex = sync.RWMutex{}
-	team := &Team{name, defaultBandwidth, defaultIO, defaultCPU, defaultEntropy, defaultOpSecMeter, objType, false, startNode, []DiscoveredNode{}, []Monitor{}, mutex}
+	team := &Team{name, defaultBandwidth, defaultIO, defaultCPU, defaultEntropy, defaultOpSecMeter, objType, false, startNode, []DiscoveredNode{}, []Monitor{}, &sync.RWMutex{}}
 
 	if team.StartNode.IPAddr != "" {
 		team.DiscoverNodeIP(team.StartNode)

@@ -11,7 +11,7 @@ const (
 )
 
 type Monitor struct {
-	mutex         sync.RWMutex
+	mutex         *sync.RWMutex
 	StartTime     time.Time
 	LastLog       time.Time
 	MonitorType   string
@@ -40,9 +40,9 @@ func CheckMonitor(ipAddr string, team *Team, PID int) ([]Log, error) {
 	return nil, nil
 }
 
-func (team *Team) NewMonitor(monitorType string, process *Process) Monitor {
-	monitor := Monitor{MonitorType: monitorType, StartTime: time.Now(), LastLog: time.Time{}, Process: process, CollectedLogs: nil, TeamName: team.Name}
-	return monitor
+func (team *Team) NewMonitor(monitorType string, process *Process) *Monitor {
+	monitor := Monitor{MonitorType: monitorType, StartTime: time.Now(), LastLog: time.Time{}, Process: process, CollectedLogs: nil, TeamName: team.Name, mutex: &sync.RWMutex{}}
+	return &monitor
 }
 
 func (monitor *Monitor) MonitorNetwork(team *Team) {

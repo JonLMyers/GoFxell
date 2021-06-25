@@ -1,7 +1,6 @@
-package client
-
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -9,6 +8,30 @@ import (
 	"github.com/JonLMyers/GoFxell/game"
 )
 
+case strings.HasPrefix(cmd, "scan"):
+case strings.HasPrefix(cmd, "exploit"):
+case strings.HasPrefix(cmd, "dos"):
+case strings.HasPrefix(cmd, "show targets"):
+case strings.HasPrefix(cmd, "show resources"):
+case strings.HasPrefix(cmd, "connect"):
+func ProcessScan(){
+
+}
+func ExploitProcesor(cmdParts []string){
+	
+}
+func DosProcesor(){
+	
+}
+func ShowTargetsProcesor(){
+	
+}
+func ShowResourcesProcesor(){
+	
+}
+func ConnectProcesor(){
+	
+}
 func Executor(cmd string) {
 	cmd = strings.TrimSpace(cmd)
 	if cmd == "" {
@@ -16,18 +39,77 @@ func Executor(cmd string) {
 	}
 	cmdParts := strings.Split(cmd, " ")
 
-	switch {
-	case strings.HasPrefix(cmd, "scan"):
-	case strings.HasPrefix(cmd, "exploit"):
-	case strings.HasPrefix(cmd, "dos"):
-	case strings.HasPrefix(cmd, "show targets"):
-	case strings.HasPrefix(cmd, "show resources"):
-	case strings.HasPrefix(cmd, "connect"):
-	case strings.HasPrefix(cmd, "exit"):
-	default:
-		fmt.Println("Invalid Command")
-
+	if strings.HasPrefix(cmd, "scan") {
+		playerTeam.Scan(cmdParts[1])
+		fmt.Println(playerTeam.ShowTargets())
+		return
 	}
+
+	if strings.HasPrefix(cmd, "exploit") {
+		if len(cmdParts) < 3 {
+			fmt.Println("Invalid Exploit Syntax")
+		}
+		//Create a prompt here and for connect... oh wait doesn't work.
+		if cmdParts[1] == "Windows" || cmdParts[1] == "Linux" {
+			ok, _ := playerTeam.PlatformExploit(cmdParts[2])
+			if !ok {
+				fmt.Println("Platform Exploit Failed")
+				return
+			}
+			fmt.Println("Platform Exploit Successful")
+			playerTeam.ShowTargets()
+			return
+		}
+		if cmdParts[1] == "Web" || cmdParts[1] == "SSH" || cmdParts[1] == "SMTP" || cmdParts[1] == "FTP" || cmdParts[1] == "Mail" || cmdParts[1] == "SMB" {
+			ok, _ := playerTeam.ServiceExploit(cmdParts[2], cmdParts[1])
+			if !ok {
+				fmt.Println("Service Exploit Failed")
+				return
+			}
+			fmt.Println("Service Exploit Successful")
+			playerTeam.ShowTargets()
+			return
+		}
+		return
+	}
+
+	if strings.HasPrefix(cmd, "dos") {
+		playerTeam.DenialOfService(cmdParts[1])
+		return
+	}
+
+	if strings.HasPrefix(cmd, "show targets") {
+		nodes := playerTeam.ShowTargets()
+		fmt.Println(nodes)
+		return
+	}
+
+	if strings.HasPrefix(cmd, "show resources") {
+		resources := playerTeam.GetResources()
+		fmt.Println(resources)
+		return
+	}
+
+	if strings.HasPrefix(cmd, "connect") {
+		if len(cmdParts) < 2 {
+			fmt.Println("Invalid Connect Syntax")
+			return
+		}
+		ok, err := Connect(cmdParts[1], playerTeam, *gameMap)
+		if !ok || err != nil {
+			fmt.Println("Connection Refused")
+			return
+		}
+		fmt.Println("Connection Closed")
+		return
+	}
+
+	if strings.HasPrefix(cmd, "exit") {
+		os.Exit(0)
+		return
+	}
+
+	fmt.Println("Invalid Command")
 }
 
 func CmdExecutor(cmd string) {

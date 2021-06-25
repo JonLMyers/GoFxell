@@ -12,6 +12,7 @@
                 "10.0.0.8"
             ],
             "start_node": true,
+            "objective_node": false,
             "loot_rate": 0,
             "max_miners": 3
         },
@@ -27,6 +28,7 @@
                 "10.0.0.8"
             ],
             "start_node": true,
+            "objective_node": false,
             "loot_rate": 0,
             "max_miners": 3
         },
@@ -42,6 +44,7 @@
                 "10.0.0.8"
             ],
             "start_node": false,
+            "objective_node": true,
             "loot_rate": 0,
             "max_miners": 3
         },
@@ -58,6 +61,7 @@
                 "10.0.0.9"
             ],
             "start_node": false,
+            "objective_node": false,
             "loot_rate": 0,
             "max_miners": 3
         },
@@ -76,6 +80,7 @@
                 "10.0.0.4"
             ],
             "start_node": false,
+            "objective_node": false,
             "loot_rate": 35,
             "max_miners": 3
         },
@@ -89,6 +94,7 @@
                 "10.0.0.8"
             ],
             "start_node": false,
+            "objective_node": false,
             "loot_rate": 0,
             "max_miners": 3
         },
@@ -100,6 +106,7 @@
             ],
             "routes": [],
             "start_node": false,
+            "objective_node": false,
             "loot_rate": 40,
             "max_miners": 3
         },
@@ -118,6 +125,7 @@
                 "10.0.0.4"
             ],
             "start_node": false,
+            "objective_node": false,
             "loot_rate": 10,
             "max_miners": 3
         },
@@ -132,6 +140,7 @@
                 "10.0.0.8"
             ],
             "start_node": false,
+            "objective_node": false,
             "loot_rate": 30,
             "max_miners": 3
         },
@@ -149,6 +158,7 @@
                 "10.0.0.5"
             ],
             "start_node": false,
+            "objective_node": false,
             "loot_rate": 50,
             "max_miners": 3
         }
