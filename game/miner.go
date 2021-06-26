@@ -61,24 +61,28 @@ func (miner *Miner) Mine(team *Team, index int) {
 			if !team.DiscoveredNodes[index].Active || !miner.Process.Alive {
 				return
 			}
-
+			//team.mutex.Unlock()
 			team.mutex.Lock()
 			defer team.mutex.Unlock()
 			switch miner.minerType {
 			case "Bandwidth":
 				team.Bandwidth = team.Bandwidth + miner.amount
+				team.mutex.Unlock()
 				continue
 			case "IO":
 				team.Io = team.Io + miner.amount
+				team.mutex.Unlock()
 				continue
 			case "Entropy":
 				team.Entropy = team.Entropy + miner.amount
+				team.mutex.Unlock()
 				continue
 			case "CPU":
 				team.Cpu = team.Cpu + miner.amount
+				team.mutex.Unlock()
 				continue
 			}
-			team.mutex.Unlock()
+			//team.mutex.Unlock()
 		}
 	}
 }

@@ -1,231 +1,251 @@
+package client
+
 import (
+	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
-	"strings"
-	"time"
 
 	"github.com/JonLMyers/GoFxell/game"
 )
 
-case strings.HasPrefix(cmd, "scan"):
-case strings.HasPrefix(cmd, "exploit"):
-case strings.HasPrefix(cmd, "dos"):
-case strings.HasPrefix(cmd, "show targets"):
-case strings.HasPrefix(cmd, "show resources"):
-case strings.HasPrefix(cmd, "connect"):
-func ProcessScan(){
-
-}
-func ExploitProcesor(cmdParts []string){
-	
-}
-func DosProcesor(){
-	
-}
-func ShowTargetsProcesor(){
-	
-}
-func ShowResourcesProcesor(){
-	
-}
-func ConnectProcesor(){
-	
-}
-func Executor(cmd string) {
-	cmd = strings.TrimSpace(cmd)
-	if cmd == "" {
-		return
-	}
-	cmdParts := strings.Split(cmd, " ")
-
-	if strings.HasPrefix(cmd, "scan") {
-		playerTeam.Scan(cmdParts[1])
-		fmt.Println(playerTeam.ShowTargets())
-		return
-	}
-
-	if strings.HasPrefix(cmd, "exploit") {
-		if len(cmdParts) < 3 {
-			fmt.Println("Invalid Exploit Syntax")
-		}
-		//Create a prompt here and for connect... oh wait doesn't work.
-		if cmdParts[1] == "Windows" || cmdParts[1] == "Linux" {
-			ok, _ := playerTeam.PlatformExploit(cmdParts[2])
-			if !ok {
-				fmt.Println("Platform Exploit Failed")
-				return
-			}
-			fmt.Println("Platform Exploit Successful")
-			playerTeam.ShowTargets()
-			return
-		}
-		if cmdParts[1] == "Web" || cmdParts[1] == "SSH" || cmdParts[1] == "SMTP" || cmdParts[1] == "FTP" || cmdParts[1] == "Mail" || cmdParts[1] == "SMB" {
-			ok, _ := playerTeam.ServiceExploit(cmdParts[2], cmdParts[1])
-			if !ok {
-				fmt.Println("Service Exploit Failed")
-				return
-			}
-			fmt.Println("Service Exploit Successful")
-			playerTeam.ShowTargets()
-			return
-		}
-		return
-	}
-
-	if strings.HasPrefix(cmd, "dos") {
-		playerTeam.DenialOfService(cmdParts[1])
-		return
-	}
-
-	if strings.HasPrefix(cmd, "show targets") {
-		nodes := playerTeam.ShowTargets()
-		fmt.Println(nodes)
-		return
-	}
-
-	if strings.HasPrefix(cmd, "show resources") {
-		resources := playerTeam.GetResources()
-		fmt.Println(resources)
-		return
-	}
-
-	if strings.HasPrefix(cmd, "connect") {
-		if len(cmdParts) < 2 {
-			fmt.Println("Invalid Connect Syntax")
-			return
-		}
-		ok, err := Connect(cmdParts[1], playerTeam, *gameMap)
-		if !ok || err != nil {
-			fmt.Println("Connection Refused")
-			return
-		}
-		fmt.Println("Connection Closed")
-		return
-	}
-
-	if strings.HasPrefix(cmd, "exit") {
-		os.Exit(0)
-		return
-	}
-
-	fmt.Println("Invalid Command")
+func ScanProcessor(cmdParts []string) []byte {
+	playerTeam.Scan(cmdParts[1])
+	return ShowTargetsProcessor()
 }
 
-func CmdExecutor(cmd string) {
-	cmd = strings.TrimSpace(cmd)
-	cmdParts := strings.Split(cmd, " ")
+func ExploitProcessor(cmdParts []string) []byte {
+	ok, message := RequiredArguments(cmdParts, 2)
+	if !ok {
+		return message
+	}
+	ok, message = DiscoveredNode(cmdParts[1], playerTeam)
+	if !ok {
+		return message
+	}
 
-	if cmd == "show routes" {
-		playerTeam.ShowRoutes(n.IPAddr, *gameMap)
-		fmt.Println(playerTeam.ShowTargets())
-		return
-	}
-	if strings.HasPrefix(cmd, "deploy miner") {
-		if len(cmdParts) < 3 {
-			fmt.Println("Invalid Syntax. Ensure you are providing a miner type {Bandwidth, IO, Entropy, or CPU")
-		}
-		playerTeam.DeployMiner(n.IPAddr, cmdParts[2])
-		return
-	}
-	if strings.HasPrefix(cmd, "deploy firewall") {
-		ok, error := game.DeployFirewall(n.IPAddr, playerTeam)
+	if len(cmdParts) == 2 {
+		ok, _ := playerTeam.PlatformExploit(cmdParts[1])
 		if !ok {
-			fmt.Println("Firewall Deployment Failed: ", error)
+			return Message("Platform Exploit Failed")
 		}
-		return
+		return ShowTargetsProcessor()
 	}
 
-	if strings.HasPrefix(cmd, "deploy netmon") {
-		proc, _ := playerTeam.NewProcess(n.IPAddr, "netmon.exe")
-		monitor := playerTeam.NewMonitor("Network", &proc)
-		if monitor.Process.CMD != "netmon.exe" {
-			fmt.Println("netmon.exe Deployment Failed.")
-			return
-		}
-		return
-	}
-
-	if strings.HasPrefix(cmd, "check monitor") {
-		if len(cmdParts) < 3 {
-			fmt.Println("Invalid Syntax. Ensure you are providing the monitor's PID")
-			return
-		}
-		i, err := strconv.Atoi(cmdParts[2])
-		if err != nil {
-			fmt.Println("Invalid PID")
-			return
-		}
-		monLogs, error := game.CheckMonitor(n.IPAddr, playerTeam, i)
-		if monLogs[0].Type == "" {
-			fmt.Println("No Logs Available: ", error)
-		}
-		return
-	}
-	if strings.HasPrefix(cmd, "show proc") {
-		processes, _ := playerTeam.ShowProcesses(n.IPAddr, *gameMap)
-		fmt.Println(processes)
-		return
-	}
-
-	if strings.HasPrefix(cmd, "show footprint") {
-		resources, _ := playerTeam.ViewNodeFootprint(n.IPAddr)
-		fmt.Println(resources)
-		return
-	}
-
-	if strings.HasPrefix(cmd, "show logs") {
-		logs, _ := game.GetLogs(n.IPAddr, playerTeam)
-		fmt.Println(logs)
-		return
-	}
-
-	if strings.HasPrefix(cmd, "clean log") {
-		if len(cmdParts) < 3 {
-			fmt.Println("Invalid Syntax. Ensure you are providing a LogId")
-		}
-
-		logs, _ := game.DeleteLog(cmdParts[2], n.IPAddr, playerTeam)
-		fmt.Println(logs)
-		return
-	}
-
-	if strings.HasPrefix(cmd, "exfiltrate") {
-		if len(cmdParts) < 2 {
-			fmt.Println("Invalid Syntax")
-			return
-		}
-		proc, _ := playerTeam.NewProcess(n.IPAddr, "GetFiles.exe")
-		ticker := time.NewTicker(time.Second * 10)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ticker.C:
-				timeleft, _ := playerTeam.ExfiltrateObjective(n.IPAddr, &proc)
-				fmt.Println("Time Remaining:", timeleft)
-			}
-		}
-	}
-
-	if strings.HasPrefix(cmd, "show resources") {
-		resources := playerTeam.GetResources()
-		fmt.Println(resources)
-		return
-	}
-
-	if strings.HasPrefix(cmd, "kill") {
-		ok, err := playerTeam.KillProcess(n.IPAddr, cmdParts[1])
+	if cmdParts[2] == "Web" || cmdParts[2] == "SSH" || cmdParts[2] == "SMTP" || cmdParts[2] == "FTP" || cmdParts[2] == "Mail" || cmdParts[2] == "SMB" {
+		ok, _ := playerTeam.ServiceExploit(cmdParts[1], cmdParts[2])
 		if !ok {
-			fmt.Println(err)
-			fmt.Println("Failed to Kill Process")
-			return
+			return Message("Service Exploit Failed")
 		}
-		fmt.Println("Process Destroyed")
-		return
+		return ShowTargetsProcessor()
 	}
-	/*if cmd == "exit" {
-		return
-	}*/
-	fmt.Println("Invalid Command")
+	return Message("Exploit Function Failure")
+}
+
+func DosProcessor(cmdParts []string) []byte {
+	ok, message := RequiredArguments(cmdParts, 2)
+	if !ok {
+		return message
+	}
+	ok, message = DiscoveredNode(cmdParts[1], playerTeam)
+	if !ok {
+		return message
+	}
+	ok, err := playerTeam.DenialOfService(cmdParts[1])
+	if !ok {
+		return Message(err.Error())
+	}
+	return Message("Denail of Service Initiated")
+}
+
+func ShowTargetsProcessor() []byte {
+	nodes := playerTeam.ShowTargets()
+	var targets []TargetResponse
+	for _, node := range nodes {
+		j := TargetResponse{IPAddr: node.IPAddr, Platform: node.Platform, Services: node.Services, Routes: node.Routes, NodeOwned: node.NodeOwned}
+		targets = append(targets, j)
+	}
+	bytes, err := json.Marshal(targets)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return bytes
+}
+
+func ShowResourcesProcessor() []byte {
+	resources := playerTeam.GetResources()
+	var response []string
+	for _, resource := range resources {
+		response = append(response, resource)
+	}
+
+	bytes, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return bytes
+}
+
+func ConnectProcessor(cmdParts []string) []byte {
+	ok, message := RequiredArguments(cmdParts, 2)
+	if !ok {
+		return message
+	}
+	ok, message = DiscoveredNode(cmdParts[1], playerTeam)
+	if !ok {
+		return message
+	}
+
+	ok, err := Connect(cmdParts[1], playerTeam, *gameMap)
+	if !ok || err != nil {
+		return Message("Connection Refused")
+	}
+	return Message("Connection Closed")
+}
+
+func ShowRoutesProcessor() []byte {
+	playerTeam.ShowRoutes(n.IPAddr, *gameMap)
+	return ShowTargetsProcessor()
+}
+
+func DeployMinerProcessor(cmdParts []string) []byte {
+	ok, message := RequiredArguments(cmdParts, 3)
+	if !ok {
+		return message
+	}
+	playerTeam.DeployMiner(n.IPAddr, cmdParts[2])
+	return Messages([]string{"miner Deployed on Target", "miner.Mine() Initiated"})
+}
+
+func DeployFirewallProcessor(cmdParts []string) []byte {
+	ok, _ := game.DeployFirewall(n.IPAddr, playerTeam)
+	if !ok {
+
+		return Message("Firewall Deployment Failed")
+	}
+	return Message("Firewall Deployment Successful")
+}
+
+func DeployNetmonProcessor(cmdParts []string) []byte {
+	proc, _ := playerTeam.NewProcess(n.IPAddr, "netmon.exe")
+	monitor := playerTeam.NewMonitor("Network", &proc)
+	if monitor.Process.CMD != "netmon.exe" {
+		return Message("Network Monitor Deployment Failed")
+	}
+	return Messages([]string{"netmon Deployed on Target", "netmon.Monitor() Initiated"})
+}
+
+func CheckMonitorProcessor(cmdParts []string) []byte {
+	ok, message := RequiredArguments(cmdParts, 2)
+	if !ok {
+		return message
+	}
+
+	monLogs, _ := game.CheckMonitor(n.IPAddr, playerTeam)
+	if len(monLogs) == 0 {
+		return Message("No Logs Available")
+	}
+	var response []LogResponse
+	for _, log := range monLogs {
+		response = append(response, LogResponse{Id: log.Id, Timestamp: log.Timestamp.Format("Mon Jan _2 15:04:05"), Type: log.Type, LogMessage: log.LogString})
+	}
+	bytes, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return bytes
+}
+
+func ShowProcessesProcessor(cmdParts []string) []byte {
+	processes, _ := playerTeam.ShowProcesses(n.IPAddr, *gameMap)
+	var response []ProcessResponse
+	for _, proc := range processes {
+		response = append(response, ProcessResponse{PID: proc.PID, CMD: proc.CMD, Team: proc.TeamName})
+	}
+	bytes, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return bytes
+}
+
+func ShowFootprintProcessor(cmdParts []string) []byte {
+	footprint, _ := playerTeam.ViewNodeFootprint(n.IPAddr)
+	message := "Node Footprint: " + strconv.Itoa(footprint)
+	return Message(message)
+}
+
+func ShowLogsProcessor(cmdParts []string) []byte {
+	logs, _ := game.GetLogs(n.IPAddr, playerTeam)
+	var response []LogResponse
+	for _, log := range logs {
+		response = append(response, LogResponse{Id: log.Id, Timestamp: log.Timestamp.Format("Mon Jan _2 15:04:05"), Type: log.Type, LogMessage: log.LogString})
+	}
+	bytes, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return bytes
+}
+
+func CleanLogProcessor(cmdParts []string) []byte {
+	ok, message := RequiredArguments(cmdParts, 3)
+	if !ok {
+		return message
+	}
+
+	ok, _ = game.DeleteLog(cmdParts[2], n.IPAddr, playerTeam)
+	if !ok {
+		return Message("Failed to Delete Logs")
+	}
+	return Message("Log Cleaned Successfully")
+}
+
+func ExfiltrateProcessor(cmdParts []string) []byte {
+	proc, _ := playerTeam.NewProcess(n.IPAddr, "GetFiles")
+	//ticker := time.NewTicker(time.Second)
+	//defer ticker.Stop()
+
+	//for {
+	//select {
+	//case <-ticker.C:
+	timeleft, _ := playerTeam.ExfiltrateObjective(n.IPAddr, &proc)
+	return Message("Seconds Remaining: " + strconv.Itoa(timeleft))
+	//}
+	//}
+}
+
+func KillProcessor(cmdParts []string) []byte {
+	ok, message := RequiredArguments(cmdParts, 2)
+	if !ok {
+		return message
+	}
+	ok, err := playerTeam.KillProcess(n.IPAddr, cmdParts[1])
+	if !ok {
+		fmt.Println(err)
+		return Message("Failed to Kill Process")
+	}
+	return Message("Process Destroyed")
+}
+
+// Helper Function for Processors. Sends a single json message
+func Message(message string) []byte {
+	bytes, err := json.Marshal(SingleResponse{Message: message})
+	if err != nil {
+		fmt.Println(err)
+	}
+	return bytes
+}
+
+// Helper Function for Processors Sends multiple (single) json messages
+func Messages(messages []string) []byte {
+	var responses []SingleResponse
+	for _, message := range messages {
+		j := SingleResponse{Message: message}
+		responses = append(responses, j)
+	}
+	bytes, err := json.Marshal(responses)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return bytes
 }

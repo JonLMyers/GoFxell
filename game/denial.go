@@ -13,11 +13,7 @@ const (
 
 //Check this with kyle: I think target is dumb.
 func (team *Team) DenialOfService(ipAddr string) (bool, error) {
-	index, err := team.DiscoveredNodes.IndexOf(ipAddr)
-	if err != nil {
-		fmt.Println("IP Address not in teams discovered nodes")
-		return false, err
-	}
+	index, _ := team.DiscoveredNodes.IndexOf(ipAddr)
 	if team.DiscoveredNodes[index].DiscoveredPlatform {
 		target := "node"
 		if FirewallExists(index, team) {
@@ -32,7 +28,7 @@ func (team *Team) DenialOfService(ipAddr string) (bool, error) {
 		}
 		return true, nil
 	}
-	return false, nil
+	return false, fmt.Errorf("DenialOfService Function Failed")
 }
 
 func Deny(index int, team *Team, locktime int) {

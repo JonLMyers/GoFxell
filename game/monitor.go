@@ -24,7 +24,7 @@ const (
 	NetworkMonitorFootprintValue = 5
 )
 
-func CheckMonitor(ipAddr string, team *Team, PID int) ([]Log, error) {
+func CheckMonitor(ipAddr string, team *Team) ([]Log, error) {
 	index, err := team.DiscoveredNodes.IndexOf(ipAddr)
 	if err != nil {
 		fmt.Println(err)
@@ -56,10 +56,35 @@ func (monitor *Monitor) MonitorNetwork(team *Team) {
 			}
 			// Get host nodes Network logs
 			for _, log := range monitor.Process.Node.Logs {
-				if log.Type == "Network" && log.Value >= MonitorLogThreshold && !log.Deleted && log.timestamp.After(monitor.LastLog) {
+				if log.Type == "Network" && log.Value >= MonitorLogThreshold && !log.Deleted && log.Timestamp.After(monitor.LastLog) {
 					monitor.mutex.Lock()
 					defer monitor.mutex.Unlock()
 					monitor.CollectedLogs = append(monitor.CollectedLogs, log)
+					monitor.LastLog = time.Now()
+					monitor.mutex.Unlock()
+				}
+			}
+		}
+	}
+}
+
+func (monitor *Monitor) MonitorProc(team *Team) {
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			if !monitor.Process.Alive {
+				return
+			}
+			// Get host nodes Network logs
+			for _, proc := range monitor.Process.Node.Processes {
+				// Check to see if a team tripped 100% footprint
+				GetLogs(monitor.Process.Node.IPAddr, team)
+				if proc.Viewable {
+					monitor.mutex.Lock()
+					defer monitor.mutex.Unlock()
+					monitor.CollectedLogs = append(monitor.CollectedLogs, Log{Id: proc.PID, Type: "Process", LogString: proc.CMD, Timestamp: time.Now()})
 					monitor.LastLog = time.Now()
 					monitor.mutex.Unlock()
 				}

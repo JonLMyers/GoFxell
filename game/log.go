@@ -7,8 +7,8 @@ import (
 )
 
 type Log struct {
-	id        string
-	timestamp time.Time
+	Id        string
+	Timestamp time.Time
 	Type      string
 	LogString string
 	Value     int
@@ -43,7 +43,7 @@ func DeleteLog(logId string, ipAddr string, team *Team) (bool, error) {
 	}
 	logs := team.DiscoveredNodes[index].Node.Logs
 	for i, log := range logs {
-		if log.id == logId {
+		if log.Id == logId {
 			if team.Name == "Red" {
 				team.DiscoveredNodes[index].RedFootprint = team.DiscoveredNodes[index].RedFootprint - log.Value
 			} else {

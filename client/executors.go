@@ -2,11 +2,9 @@ package client
 
 import (
 	"fmt"
-	"strconv"
+	"os"
 	"strings"
 	"time"
-
-	"github.com/JonLMyers/GoFxell/game"
 )
 
 func Executor(cmd string) {
@@ -18,132 +16,85 @@ func Executor(cmd string) {
 
 	switch {
 	case strings.HasPrefix(cmd, "scan"):
+		fmt.Println(string(ScanProcessor(cmdParts)))
+
 	case strings.HasPrefix(cmd, "exploit"):
+		fmt.Println(string(ExploitProcessor(cmdParts)))
+
 	case strings.HasPrefix(cmd, "dos"):
+		fmt.Println(string(DosProcessor(cmdParts)))
+
 	case strings.HasPrefix(cmd, "show targets"):
+		fmt.Println(string(ShowTargetsProcessor()))
+
 	case strings.HasPrefix(cmd, "show resources"):
+		fmt.Println(string(ShowResourcesProcessor()))
+
 	case strings.HasPrefix(cmd, "connect"):
+		fmt.Println(string(ConnectProcessor(cmdParts)))
+
 	case strings.HasPrefix(cmd, "exit"):
+		os.Exit(0)
+		return
+
 	default:
 		fmt.Println("Invalid Command")
-
 	}
 }
 
 func CmdExecutor(cmd string) {
 	cmd = strings.TrimSpace(cmd)
 	cmdParts := strings.Split(cmd, " ")
+	switch {
+	case strings.HasPrefix(cmd, "show routes"):
+		fmt.Println(string(ShowRoutesProcessor()))
 
-	if cmd == "show routes" {
-		playerTeam.ShowRoutes(n.IPAddr, *gameMap)
-		fmt.Println(playerTeam.ShowTargets())
-		return
-	}
-	if strings.HasPrefix(cmd, "deploy miner") {
-		if len(cmdParts) < 3 {
-			fmt.Println("Invalid Syntax. Ensure you are providing a miner type {Bandwidth, IO, Entropy, or CPU")
-		}
-		playerTeam.DeployMiner(n.IPAddr, cmdParts[2])
-		return
-	}
-	if strings.HasPrefix(cmd, "deploy firewall") {
-		ok, error := game.DeployFirewall(n.IPAddr, playerTeam)
-		if !ok {
-			fmt.Println("Firewall Deployment Failed: ", error)
-		}
-		return
-	}
+	case strings.HasPrefix(cmd, "deploy miner"):
+		fmt.Println(string(DeployMinerProcessor(cmdParts)))
 
-	if strings.HasPrefix(cmd, "deploy netmon") {
-		proc, _ := playerTeam.NewProcess(n.IPAddr, "netmon.exe")
-		monitor := playerTeam.NewMonitor("Network", &proc)
-		if monitor.Process.CMD != "netmon.exe" {
-			fmt.Println("netmon.exe Deployment Failed.")
-			return
-		}
-		return
-	}
+	case strings.HasPrefix(cmd, "deploy firewall"):
+		fmt.Println(string(DeployFirewallProcessor(cmdParts)))
 
-	if strings.HasPrefix(cmd, "check monitor") {
-		if len(cmdParts) < 3 {
-			fmt.Println("Invalid Syntax. Ensure you are providing the monitor's PID")
-			return
-		}
-		i, err := strconv.Atoi(cmdParts[2])
-		if err != nil {
-			fmt.Println("Invalid PID")
-			return
-		}
-		monLogs, error := game.CheckMonitor(n.IPAddr, playerTeam, i)
-		if monLogs[0].Type == "" {
-			fmt.Println("No Logs Available: ", error)
-		}
-		return
-	}
-	if strings.HasPrefix(cmd, "show proc") {
-		processes, _ := playerTeam.ShowProcesses(n.IPAddr, *gameMap)
-		fmt.Println(processes)
-		return
-	}
+	case strings.HasPrefix(cmd, "deploy netmon"):
+		fmt.Println(string(DeployNetmonProcessor(cmdParts)))
 
-	if strings.HasPrefix(cmd, "show footprint") {
-		resources, _ := playerTeam.ViewNodeFootprint(n.IPAddr)
-		fmt.Println(resources)
-		return
-	}
+	case strings.HasPrefix(cmd, "check monitor"):
+		fmt.Println(string(CheckMonitorProcessor(cmdParts)))
 
-	if strings.HasPrefix(cmd, "show logs") {
-		logs, _ := game.GetLogs(n.IPAddr, playerTeam)
-		fmt.Println(logs)
-		return
-	}
+	case strings.HasPrefix(cmd, "show proc"):
+		fmt.Println(string(ShowProcessesProcessor(cmdParts)))
 
-	if strings.HasPrefix(cmd, "clean log") {
-		if len(cmdParts) < 3 {
-			fmt.Println("Invalid Syntax. Ensure you are providing a LogId")
-		}
+	case strings.HasPrefix(cmd, "show footprint"):
+		fmt.Println(string(ShowFootprintProcessor(cmdParts)))
 
-		logs, _ := game.DeleteLog(cmdParts[2], n.IPAddr, playerTeam)
-		fmt.Println(logs)
-		return
-	}
+	case strings.HasPrefix(cmd, "show logs"):
+		fmt.Println(string(ShowLogsProcessor(cmdParts)))
 
-	if strings.HasPrefix(cmd, "exfiltrate") {
-		if len(cmdParts) < 2 {
-			fmt.Println("Invalid Syntax")
-			return
-		}
-		proc, _ := playerTeam.NewProcess(n.IPAddr, "GetFiles.exe")
-		ticker := time.NewTicker(time.Second * 10)
+	case strings.HasPrefix(cmd, "clean log"):
+		fmt.Println(string(CleanLogProcessor(cmdParts)))
+
+	case strings.HasPrefix(cmd, "exfiltrate"):
+		ticker := time.NewTicker(time.Second)
 		defer ticker.Stop()
-
 		for {
 			select {
 			case <-ticker.C:
-				timeleft, _ := playerTeam.ExfiltrateObjective(n.IPAddr, &proc)
-				fmt.Println("Time Remaining:", timeleft)
+				fmt.Println(string(ExfiltrateProcessor(cmdParts)))
 			}
 		}
-	}
 
-	if strings.HasPrefix(cmd, "show resources") {
-		resources := playerTeam.GetResources()
-		fmt.Println(resources)
-		return
-	}
+	case strings.HasPrefix(cmd, "show resources"):
+		fmt.Println(string(ShowResourcesProcessor()))
 
-	if strings.HasPrefix(cmd, "kill") {
-		ok, err := playerTeam.KillProcess(n.IPAddr, cmdParts[1])
-		if !ok {
-			fmt.Println(err)
-			fmt.Println("Failed to Kill Process")
-			return
-		}
-		fmt.Println("Process Destroyed")
+	case strings.HasPrefix(cmd, "kill"):
+		fmt.Println(string(KillProcessor(cmdParts)))
+
+	case strings.HasPrefix(cmd, "exit"):
 		return
+
+	case strings.HasPrefix(cmd, ""):
+		//Do nothing :)
+	default:
+		fmt.Println("Invalid Command")
 	}
-	/*if cmd == "exit" {
-		return
-	}*/
-	fmt.Println("Invalid Command")
 }

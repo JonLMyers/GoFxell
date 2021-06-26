@@ -23,14 +23,12 @@ func SinglePlayer() {
 
 	/* Main gameplay loop */
 	// https://youtu.be/-GV814cWiAw
-	fmt.Println(playerTeam.View(&playerTeam.StartNode))
+
+	fmt.Println(string(ShowTargetsProcessor()))
 	playerName := "player"
 	currentSystem := "fxell"
 	promptPrefix := fmt.Sprintf("%s@%s:~$ ", playerName, currentSystem)
 
-	//cmd := prompt.Input(gamePrompt, actionCompleter)
-	//cmd = strings.TrimSpace(cmd)
-	//cmdParts := strings.Split(cmd, " ")
 	go VictoryChecker(playerTeam)
 
 	gamePrompt := prompt.New(

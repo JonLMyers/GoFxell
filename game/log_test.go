@@ -31,7 +31,7 @@ func TestDeleteLog(t *testing.T) {
 	testTeam.Scan(startNode.IPAddr)
 	testTeam.ServiceExploit(startNode.IPAddr, "http")
 	log, _ := NewLog(startNode.IPAddr, "Test", "TestTest", 10, testTeam)
-	success, _ := DeleteLog(log.id, startNode.IPAddr, testTeam)
+	success, _ := DeleteLog(log.Id, startNode.IPAddr, testTeam)
 	require.Equal(t, true, success)
 	logs, _ := GetLogs(startNode.IPAddr, testTeam)
 	require.Equal(t, true, logs[1].Deleted)

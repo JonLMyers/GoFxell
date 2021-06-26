@@ -1,8 +1,6 @@
 package game
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 )
 
@@ -21,25 +19,28 @@ type Process struct {
 }
 
 func (team *Team) NewProcess(ipAddr string, cmd string) (Process, error) {
-	index, err := team.DiscoveredNodes.IndexOf(ipAddr)
-	if err != nil {
-		fmt.Println(err)
-		return Process{}, err
-	}
-	//Change this to false by default
-	proc := Process{team.Name, team.DiscoveredNodes[index].Node, uuid.New().String(), cmd, true, true}
+	index, _ := team.DiscoveredNodes.IndexOf(ipAddr)
+
+	proc := Process{team.Name, team.DiscoveredNodes[index].Node, uuid.New().String(), cmd, false, true}
 	team.DiscoveredNodes[index].Processes = append(team.DiscoveredNodes[index].Processes, proc)
 	return proc, nil
 }
 
 func (team *Team) ShowProcesses(ipAddr string, gameMap Map) ([]Process, error) {
-	index, err := team.DiscoveredNodes.IndexOf(ipAddr)
-	if err != nil {
-		return nil, err
-	}
+	index, _ := team.DiscoveredNodes.IndexOf(ipAddr)
 	var procs []Process
 
 	for _, proc := range team.DiscoveredNodes[index].Node.Processes {
+		if proc.TeamName == "Red" && team.DiscoveredNodes[index].Node.BlueFootprint >= 100 {
+			if proc.TeamName == "Blue" {
+				proc.Viewable = true
+			}
+		}
+		if proc.TeamName == "Blue" && team.DiscoveredNodes[index].Node.RedFootprint >= 100 {
+			if proc.TeamName == "Red" {
+				proc.Viewable = true
+			}
+		}
 		if proc.Viewable || proc.TeamName == team.Name {
 			procs = append(procs, proc)
 		}

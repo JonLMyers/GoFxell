@@ -49,12 +49,12 @@ type Team struct {
 	StartNode         Node
 	DiscoveredNodes   DiscoveredNodes
 	Monitors          []Monitor
-	mutex             *sync.RWMutex
+	mutex             sync.RWMutex
 }
 
 func NewTeam(name string, objType string, gameMap *Map) *Team {
 	startNode := gameMap.SelectStartNode()
-	team := &Team{name, defaultBandwidth, defaultIO, defaultCPU, defaultEntropy, defaultOpSecMeter, objType, false, startNode, []DiscoveredNode{}, []Monitor{}, &sync.RWMutex{}}
+	team := &Team{name, defaultBandwidth, defaultIO, defaultCPU, defaultEntropy, defaultOpSecMeter, objType, false, startNode, []DiscoveredNode{}, []Monitor{}, sync.RWMutex{}}
 
 	if team.StartNode.IPAddr != "" {
 		team.DiscoverNodeIP(team.StartNode)
@@ -62,7 +62,7 @@ func NewTeam(name string, objType string, gameMap *Map) *Team {
 	return team
 }
 
-func (team Team) GetResources() [4]string {
+func (team *Team) GetResources() [4]string {
 	var resources [4]string
 	resources[0] = fmt.Sprintf("Bandwidth: %d", team.Bandwidth)
 	resources[1] = fmt.Sprintf("Disc I/O: %d", team.Io)
@@ -73,7 +73,7 @@ func (team Team) GetResources() [4]string {
 }
 
 // View restricts what properties of a node are visible.
-func (team Team) View(node *Node) (visibleNode Node) {
+func (team *Team) View(node *Node) (visibleNode Node) {
 	// Determine if this node has been discovered.
 	i, err := team.DiscoveredNodes.IndexOf(node.IPAddr)
 	if err != nil {
